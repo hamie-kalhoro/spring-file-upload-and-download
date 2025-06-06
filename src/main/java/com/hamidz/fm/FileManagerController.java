@@ -1,9 +1,8 @@
 package com.hamidz.fm;
 
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +37,10 @@ public class FileManagerController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("fileName") String fileName) {
+    public ResponseEntity<Resource> downloadFile(@RequestParam("fileName") String fileName) throws Exception {
         try {
             var fileToDownload = fileStorageService.getDownloadFile(fileName);
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                     .contentLength(fileToDownload.length())
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(new InputStreamResource(Files.newInputStream(fileToDownload.toPath())));
@@ -50,6 +48,4 @@ public class FileManagerController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }
